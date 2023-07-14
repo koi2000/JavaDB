@@ -2,7 +2,7 @@ package com.koi.javadb.backend.tm;
 
 import com.koi.javadb.backend.utils.Panic;
 import com.koi.javadb.backend.utils.Parser;
-import com.koi.javadb.comon.Errors;
+import com.koi.javadb.common.Errors;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -62,6 +62,7 @@ public class TransactionManagerImpl implements TransactionManager {
         return LEN_XID_HEADER_LENGTH + (xid - 1) * XID_FIELD_SIZE;
     }
 
+    // 将文件中xid事务对应的信息更改
     private void updateXID(long xid, byte status) {
         long offset = getXidPosition(xid);
         byte[] tmp = new byte[XID_FIELD_SIZE];
@@ -81,38 +82,88 @@ public class TransactionManagerImpl implements TransactionManager {
         }
     }
 
+    // 将XID加一，并更新XID Header
+    private void incrXIDCounter() {
+        xidCounter++;
+        ByteBuffer buf = ByteBuffer.wrap(Parser.long2Byte(xidCounter));
+        try {
+            fc.position(0);
+            fc.write(buf);
+        } catch (IOException e) {
+            Panic.panic(e);
+        }
+        try {
+            fc.force(false);
+        } catch (IOException e) {
+            Panic.panic(e);
+        }
+    }
+
+    // 开启一个事务，并返回XID
     @Override
     public long begin() {
-        return 0;
+        counterLock.lock();
+        try {
+            long xid = xidCounter + 1;
+            updateXID(xid, FIELD_TRAN_ACTIVE);
+            incrXIDCounter();
+            return xid;
+        } finally {
+            counterLock.unlock();
+        }
     }
 
     @Override
-    public void commit() {
-
+    // 提交XID事务
+    public void commit(long xid) {
+        updateXID(xid, FIELD_TRAN_COMMITTED);
     }
 
     @Override
-    public void abort() {
+    // 回购XID事务
+    public void abort(long xid) {
+        updateXID(xid, FIELD_TRAN_ABORTED);
+    }
 
+    private boolean checkXID(long xid, byte status) {
+        // 获取事务对应的offset
+        long offset = getXidPosition(xid);
+        // 获取buffer
+        ByteBuffer buf = ByteBuffer.wrap(new byte[XID_FIELD_SIZE]);
+        try {
+            fc.position(offset);
+            fc.read(buf);
+        } catch (IOException e) {
+            Panic.panic(e);
+        }
+        return buf.array()[0] == status;
     }
 
     @Override
     public boolean isActive(long xid) {
-        return false;
+        if (xid == SUPER_XID) return false;
+        return checkXID(xid, FIELD_TRAN_ACTIVE);
     }
 
     @Override
     public boolean isCommitted(long xid) {
-        return false;
+        if (xid == SUPER_XID) return false;
+        return checkXID(xid, FIELD_TRAN_COMMITTED);
     }
 
     @Override
-    public boolean isAborted() {
-        return false;
+    public boolean isAborted(long xid) {
+        if (xid == SUPER_XID) return false;
+        return checkXID(xid, FIELD_TRAN_ABORTED);
     }
 
     @Override
     public void close() {
-
+        try {
+            fc.close();
+            file.close();
+        } catch (IOException e) {
+            Panic.panic(e);
+        }
     }
 }

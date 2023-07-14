@@ -1,4 +1,4 @@
-package com.koi.javadb.comon;
+package com.koi.javadb.common;
 
 public class Errors {
     // common

@@ -1,7 +1,7 @@
 package com.koi.javadb.backend.tm;
 
 import com.koi.javadb.backend.utils.Panic;
-import com.koi.javadb.comon.Errors;
+import com.koi.javadb.common.Errors;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,10 +21,10 @@ public interface TransactionManager {
     long begin();
 
     // 提交一个事务
-    void commit();
+    void commit(long xid);
 
     // 取消一个事务
-    void abort();
+    void abort(long xid);
 
     // 查询一个事务的状态是否是正在进行
     boolean isActive(long xid);
@@ -33,7 +33,7 @@ public interface TransactionManager {
     boolean isCommitted(long xid);
 
     // 查询一个事务的状态是否是已取消
-    boolean isAborted();
+    boolean isAborted(long xid);
 
     // 结束事务
     void close();
