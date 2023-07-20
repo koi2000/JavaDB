@@ -45,7 +45,7 @@ public class TransactionManagerImpl implements TransactionManager {
             Panic.panic(e);
         }
         if (fileLen < LEN_XID_HEADER_LENGTH) {
-            Panic.panic(Errors.BadXIDFieException);
+            Panic.panic(Errors.BadXIDFileException);
         }
         ByteBuffer buf = ByteBuffer.allocate(LEN_XID_HEADER_LENGTH);
         try {
