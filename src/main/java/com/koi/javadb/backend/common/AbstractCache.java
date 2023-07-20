@@ -120,6 +120,6 @@ public abstract class AbstractCache<T> {
     protected abstract void releaseForCache(T obj);
 
     // 资源不在缓存时的获取行为
-    protected abstract T getForCache(long key);
+    protected abstract T getForCache(long key) throws Exception;
 
 }

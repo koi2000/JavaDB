@@ -30,7 +30,7 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
 
     public PageCacheImpl(RandomAccessFile file, FileChannel fileChannel, int maxResource) {
         super(maxResource);
-        if (maxResource < MEM_MIN_LIM) {
+        if(maxResource < MEM_MIN_LIM) {
             Panic.panic(Errors.MemTooSmallException);
         }
         long length = 0;
@@ -40,9 +40,9 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
             Panic.panic(e);
         }
         this.file = file;
-        this.fc = fc;
+        this.fc = fileChannel;
         this.fileLock = new ReentrantLock();
-        this.pageNumbers = new AtomicInteger();
+        this.pageNumbers = new AtomicInteger((int)length / PAGE_SIZE);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
         PageImpl pg = new PageImpl(pgno, initData, null);
         // 页面写入磁盘
         flush(pg);
-        return 0;
+        return pgno;
     }
 
     @Override
@@ -61,9 +61,10 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
 
     // 根据pageNumber从数据库文件中读取页数据，并包过成Page
     @Override
-    protected Page getForCache(long key) {
+    protected Page getForCache(long key) throws Exception {
         int pgno = (int) key;
         long offset = PageCacheImpl.pageOffset(pgno);
+
         ByteBuffer buf = ByteBuffer.allocate(PAGE_SIZE);
         fileLock.lock();
         try {
