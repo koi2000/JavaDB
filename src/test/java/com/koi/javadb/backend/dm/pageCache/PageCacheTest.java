@@ -20,7 +20,7 @@ public class PageCacheTest {
 
     @Test
     public void testPageCache() throws Exception {
-        PageCacheImpl pc = PageCache.create("/tmp/pcacher_simple_test0", PageCache.PAGE_SIZE * 50);
+        PageCache pc = PageCache.create("/tmp/pcacher_simple_test0", PageCache.PAGE_SIZE * 50);
         for (int i = 0; i < 100; i++) {
             byte[] tmp = new byte[PageCache.PAGE_SIZE];
             tmp[0] = (byte) i;

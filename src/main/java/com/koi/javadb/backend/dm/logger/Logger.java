@@ -16,11 +16,6 @@ import java.nio.channels.FileChannel;
 * [XChecksum][Log1][Log2][Log3]...[LogN][BadTail]
 * Size是一个四字节整数，标识Data段的字节数，Checksum 则是该条日志的校验和
 * [Size][Checksum][Data]
-*
-*
-*
-*
-*
 * * * * * * * * */
 public interface Logger {
 

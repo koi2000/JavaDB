@@ -41,7 +41,8 @@ public class TransactionManagerTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assert new File("/tmp/tranmger_test.xid").delete();
+        tmger.close();
+        assert new File("/tmp/tranmger_test01.xid").delete();
     }
 
     private void worker() {

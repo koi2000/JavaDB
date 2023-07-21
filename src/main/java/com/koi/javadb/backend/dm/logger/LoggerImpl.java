@@ -91,7 +91,7 @@ public class LoggerImpl implements Logger {
             Panic.panic(Errors.BadLogFileException);
         }
         try {
-            // position的数据被剔除
+            // position后的数据被剔除
             truncate(position);
         }catch (Exception e){
             Panic.panic(e);

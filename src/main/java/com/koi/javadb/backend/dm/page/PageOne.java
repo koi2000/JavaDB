@@ -40,13 +40,12 @@ public class PageOne {
         System.arraycopy(raw, OF_VC, raw, OF_VC + LEN_VC, LEN_VC);
     }
 
-    private static boolean checkVc(Page pg) {
+    public static boolean checkVc(Page pg) {
         return checkVc(pg.getData());
     }
 
     private static boolean checkVc(byte[] raw) {
         // 比较前后两块是否相等
         return Arrays.equals(Arrays.copyOfRange(raw, OF_VC, OF_VC + LEN_VC), Arrays.copyOfRange(raw, OF_VC + LEN_VC, OF_VC + 2 * LEN_VC));
-
     }
 }
