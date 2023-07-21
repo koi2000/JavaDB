@@ -78,7 +78,7 @@ public class DataManagerImpl extends AbstractCache<DataItem> implements DataMana
             return Types.addressToUid(pi.pgno, offset);
         } finally {
             // 将取出的pg重新插入pIndex
-            if(pg != null) {
+            if (pg != null) {
                 pIndex.add(pi.pgno, PageX.getFreeSpace(pg));
             } else {
                 pIndex.add(pi.pgno, freeSpace);
@@ -101,7 +101,7 @@ public class DataManagerImpl extends AbstractCache<DataItem> implements DataMana
         logger.log(log);
     }
 
-    public void releaseDataItem(DataItem di){
+    public void releaseDataItem(DataItem di) {
         super.release(di.getUid());
     }
 
