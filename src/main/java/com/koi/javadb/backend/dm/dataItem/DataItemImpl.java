@@ -63,7 +63,7 @@ public class DataItemImpl implements DataItem {
 
     @Override
     public void after(long xid) {
-        System.arraycopy(oldRaw, 0, raw.raw, raw.start, oldRaw.length);
+        dm.logDataItem(xid, this);
         wLock.unlock();
     }
 
