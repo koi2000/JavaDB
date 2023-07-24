@@ -47,6 +47,7 @@ public class DataItemImpl implements DataItem {
         return new SubArray(raw.raw, raw.start + OF_DATA, raw.end);
     }
 
+    // 修改之前需要调用before方法
     @Override
     public void before() {
         wLock.lock();
@@ -55,12 +56,14 @@ public class DataItemImpl implements DataItem {
         System.arraycopy(raw.raw, raw.start, oldRaw, 0, oldRaw.length);
     }
 
+    // 撤销修改时，需要调用unbefore
     @Override
     public void unBefore() {
         System.arraycopy(oldRaw, 0, raw.raw, raw.start, oldRaw.length);
         wLock.unlock();
     }
 
+    // 修改完成后，调用after
     @Override
     public void after(long xid) {
         dm.logDataItem(xid, this);
