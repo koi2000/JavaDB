@@ -84,22 +84,22 @@ public class LoggerImpl implements Logger {
         int xCheck = 0;
         while (true) {
             byte[] log = internNext();
-            if (log==null)break;
+            if (log == null) break;
             xCheck = calChecksum(xCheck, log);
         }
-        if(xCheck!=xChecksum){
+        if (xCheck != xChecksum) {
             Panic.panic(Errors.BadLogFileException);
         }
         try {
             // position后的数据被剔除
             truncate(position);
-        }catch (Exception e){
+        } catch (Exception e) {
             Panic.panic(e);
         }
-        try{
+        try {
             // 将文件指针转回到该位置
             file.seek(position);
-        }catch (IOException e){
+        } catch (IOException e) {
             Panic.panic(e);
         }
         rewind();
@@ -163,9 +163,9 @@ public class LoggerImpl implements Logger {
     }
 
     /*
-    * 读出size大小
-    * 读出数据
-    * * * */
+     * 读出size大小
+     * 读出数据
+     * * * */
     private byte[] internNext() {
         if (position + OF_DATA >= fileSize) {
             return null;

@@ -164,7 +164,7 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
     }
 
     @Override
-    public void abort(long xid) throws Exception {
+    public void abort(long xid) {
         internAbort(xid, false);
     }
 
